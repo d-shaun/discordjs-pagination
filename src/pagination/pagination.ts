@@ -10,7 +10,8 @@ import {
     TextInputBuilder,
     TextInputStyle,
     ModalActionRowComponentBuilder,
-    ModalSubmitInteraction
+    ModalSubmitInteraction,
+    MessageActionRowComponentBuilder
 } from "discord.js";
 import { TypesButtons, StylesButton, ButtonsValues, PaginationOptions } from "./pagination.i";
 
@@ -31,7 +32,7 @@ const defaultStyles = {
 }
 
 export const pagination = async (options: PaginationOptions) => {
-    const { interaction, message, ephemeral, author, disableButtons, embeds, buttons, time, max, customFilter, fastSkip, pageTravel } = options
+    const { interaction, message, ephemeral, author, disableButtons, embeds, buttons, time, max, customFilter, customActionRows, fastSkip, pageTravel } = options
     let currentPage = 1;
     const disableB = disableButtons || false;
     const ephemeralMessage = ephemeral !== null ? ephemeral : false;
@@ -75,9 +76,20 @@ export const pagination = async (options: PaginationOptions) => {
         );
     }
 
-    const components = (state?: boolean) => [
-        new ActionRowBuilder<ButtonBuilder>().addComponents(generateButtons(state))
-    ]
+    const components = (state?: boolean) => {
+        const ActionRows: ActionRowBuilder<MessageActionRowComponentBuilder>[] = [
+          new ActionRowBuilder<ButtonBuilder>().addComponents(
+            generateButtons(state)
+          ),
+        ];
+    
+        customActionRows?.forEach((ActionRow, i) => {
+          if (i === 0) ActionRows[0].addComponents(ActionRow.components);
+          else ActionRows.push(ActionRow);
+        });
+    
+        return ActionRows;
+    };
 
     const changeFooter = () => {
         const embed = embeds[currentPage - 1];
