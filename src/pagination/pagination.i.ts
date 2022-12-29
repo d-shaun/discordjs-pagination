@@ -4,7 +4,10 @@ import {
     Message,
     User,
     ButtonStyle,
-    CommandInteraction
+    CommandInteraction,
+    ActionRowBuilder,
+    ButtonBuilder,
+    MessageActionRowComponentBuilder
 } from "discord.js"
 
 export interface PaginationOptions {
@@ -66,6 +69,11 @@ export interface PaginationOptions {
      * custom filter for message component collector
      */
     customFilter?(interaction: ButtonInteraction): boolean
+
+    /**
+     * custom action rows for the sent message
+     */
+    customActionRows?: ActionRows;
 }
 
 export const TypesButtons = {
@@ -94,3 +102,9 @@ export interface Buttons {
     emoji?: string|null
     style: StylesButtonValues
 }
+
+export type ActionRows = [
+    ActionRowBuilder<ButtonBuilder>,
+    ...ActionRowBuilder<MessageActionRowComponentBuilder>[]
+];
+  
